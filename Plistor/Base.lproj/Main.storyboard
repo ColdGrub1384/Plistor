@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="ipad10_2" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Document Browser View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="DocumentBrowserViewController" customModule="Plistor" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="0fo-ii-Aj5"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="26" y="654"/>
+        </scene>
+        <!--Property List-->
+        <scene sceneID="dkP-xk-x6W">
+            <objects>
+                <viewController storyboardIdentifier="DocumentViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="M2k-L8-Olo" customClass="DocumentViewController" customModule="Plistor" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="SIE-Uh-Zny">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="wH4-ox-9Ps">
+                                <rect key="frame" x="20" y="109" width="1040" height="32"/>
+                                <segments>
+                                    <segment title="Property List"/>
+                                    <segment title="Source Code"/>
+                                </segments>
+                                <connections>
+                                    <action selector="switchMode:" destination="M2k-L8-Olo" eventType="valueChanged" id="ut2-vQ-vDL"/>
+                                </connections>
+                            </segmentedControl>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ziX-Ye-ID3">
+                                <rect key="frame" x="0.0" y="109" width="780" height="701"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="M2k-L8-Olo" id="VwV-o8-1Hp"/>
+                                    <outlet property="delegate" destination="M2k-L8-Olo" id="fzP-dD-EIb"/>
+                                </connections>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nj2-Oj-FVv">
+                                <rect key="frame" x="780" y="109" width="300" height="701"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="jaF-iC-zUO"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="jaF-iC-zUO"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <mask key="constraints">
+                                        <include reference="jaF-iC-zUO"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="nj2-Oj-FVv" firstAttribute="bottom" secondItem="BoZ-jc-2Y8" secondAttribute="bottom" id="1V1-PV-8aV"/>
+                            <constraint firstItem="wH4-ox-9Ps" firstAttribute="top" secondItem="nj2-Oj-FVv" secondAttribute="top" id="3SO-Nc-Gb2"/>
+                            <constraint firstItem="nj2-Oj-FVv" firstAttribute="leading" secondItem="SIE-Uh-Zny" secondAttribute="leading" id="3as-ov-cLV"/>
+                            <constraint firstItem="wH4-ox-9Ps" firstAttribute="leading" secondItem="SIE-Uh-Zny" secondAttribute="leadingMargin" id="81c-8p-oV8"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="top" secondItem="BoZ-jc-2Y8" secondAttribute="top" constant="7" id="9CY-pV-auX"/>
+                            <constraint firstItem="wH4-ox-9Ps" firstAttribute="leading" secondItem="SIE-Uh-Zny" secondAttribute="leadingMargin" id="ApL-IZ-j5G"/>
+                            <constraint firstAttribute="trailing" secondItem="nj2-Oj-FVv" secondAttribute="trailing" id="BAD-GB-L86"/>
+                            <constraint firstItem="wH4-ox-9Ps" firstAttribute="trailing" secondItem="SIE-Uh-Zny" secondAttribute="trailingMargin" id="IeB-Gl-ovR"/>
+                            <constraint firstItem="wH4-ox-9Ps" firstAttribute="top" secondItem="BoZ-jc-2Y8" secondAttribute="top" constant="7" id="M3a-2B-gQ0"/>
+                            <constraint firstItem="nj2-Oj-FVv" firstAttribute="top" secondItem="ziX-Ye-ID3" secondAttribute="top" id="TTX-4c-gJc"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="top" secondItem="wH4-ox-9Ps" secondAttribute="bottom" constant="8" symbolic="YES" id="Twr-Gf-e4F"/>
+                            <constraint firstItem="nj2-Oj-FVv" firstAttribute="leading" secondItem="ziX-Ye-ID3" secondAttribute="leading" id="WFC-9H-hXH"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="trailing" secondItem="nj2-Oj-FVv" secondAttribute="trailing" id="XRJ-uA-Fpl"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="bottom" secondItem="BoZ-jc-2Y8" secondAttribute="bottom" id="dQ3-yg-9SM"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="bottom" secondItem="nj2-Oj-FVv" secondAttribute="bottom" id="iLT-La-BIt"/>
+                            <constraint firstItem="nj2-Oj-FVv" firstAttribute="trailing" secondItem="BoZ-jc-2Y8" secondAttribute="trailing" id="k01-7q-dwj"/>
+                            <constraint firstItem="nj2-Oj-FVv" firstAttribute="leading" secondItem="ziX-Ye-ID3" secondAttribute="trailing" id="k1t-iG-h0I"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="top" secondItem="wH4-ox-9Ps" secondAttribute="top" id="mgn-Rk-ksY"/>
+                            <constraint firstItem="wH4-ox-9Ps" firstAttribute="centerX" secondItem="ziX-Ye-ID3" secondAttribute="centerX" id="rY7-dx-G9w"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="leading" secondItem="BoZ-jc-2Y8" secondAttribute="leading" id="vHx-DW-U9J"/>
+                            <constraint firstItem="ziX-Ye-ID3" firstAttribute="bottom" secondItem="BoZ-jc-2Y8" secondAttribute="bottom" id="zNH-ud-CQ6"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="BoZ-jc-2Y8"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="9CY-pV-auX"/>
+                                <exclude reference="iLT-La-BIt"/>
+                                <exclude reference="mgn-Rk-ksY"/>
+                                <exclude reference="vHx-DW-U9J"/>
+                                <exclude reference="zNH-ud-CQ6"/>
+                                <exclude reference="3SO-Nc-Gb2"/>
+                                <exclude reference="81c-8p-oV8"/>
+                                <exclude reference="IeB-Gl-ovR"/>
+                                <exclude reference="k01-7q-dwj"/>
+                                <exclude reference="k1t-iG-h0I"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=regular">
+                            <mask key="constraints">
+                                <include reference="9CY-pV-auX"/>
+                                <exclude reference="Twr-Gf-e4F"/>
+                                <exclude reference="XRJ-uA-Fpl"/>
+                                <exclude reference="dQ3-yg-9SM"/>
+                                <include reference="iLT-La-BIt"/>
+                                <include reference="mgn-Rk-ksY"/>
+                                <include reference="vHx-DW-U9J"/>
+                                <include reference="zNH-ud-CQ6"/>
+                                <include reference="3SO-Nc-Gb2"/>
+                                <include reference="81c-8p-oV8"/>
+                                <exclude reference="ApL-IZ-j5G"/>
+                                <include reference="IeB-Gl-ovR"/>
+                                <exclude reference="M3a-2B-gQ0"/>
+                                <exclude reference="rY7-dx-G9w"/>
+                                <exclude reference="1V1-PV-8aV"/>
+                                <exclude reference="3as-ov-cLV"/>
+                                <exclude reference="BAD-GB-L86"/>
+                                <exclude reference="TTX-4c-gJc"/>
+                                <exclude reference="WFC-9H-hXH"/>
+                                <include reference="k01-7q-dwj"/>
+                                <include reference="k1t-iG-h0I"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <navigationItem key="navigationItem" title="Property List" id="raW-mY-zuO">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="QG7-n4-deR">
+                            <connections>
+                                <action selector="dismissDocumentViewController" destination="M2k-L8-Olo" id="vcH-Xj-3m1"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="hdq-1q-Q3H">
+                            <connections>
+                                <action selector="addItem:" destination="M2k-L8-Olo" id="kSh-Ou-Qgh"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="accessoryView" destination="nj2-Oj-FVv" id="wkE-gl-3am"/>
+                        <outlet property="segmentedControl" destination="wH4-ox-9Ps" id="7kX-6n-5TT"/>
+                        <outlet property="tableView" destination="ziX-Ye-ID3" id="sHX-3V-XVe"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rl9-ES-qQn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1967.1875" y="652.1484375"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="M2v-8I-6W8">
+            <objects>
+                <navigationController storyboardIdentifier="editor" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bkh-oq-lBc" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="pvJ-dz-KtX">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="M2k-L8-Olo" kind="relationship" relationship="rootViewController" id="9SX-Qk-Hl1"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9ia-91-F8Y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1029.5999999999999" y="653.52323838080963"/>
+        </scene>
+    </scenes>
+</document>
