@@ -73,6 +73,8 @@ class ConsoleViewController: UIViewController {
         
         edgesForExtendedLayout = []
         
+        view.backgroundColor = .systemBackground
+        
         textView = UITextView()
         textView.isEditable = false
         textView.font = UIFont(name: "Menlo", size: UIFont.systemFontSize)
@@ -116,6 +118,8 @@ class ConsoleViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isTranslucent = false
         
         if movableTextField == nil {
             movableTextField = MovableTextField(console: self)
