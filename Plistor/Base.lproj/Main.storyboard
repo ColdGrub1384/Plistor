@@ -137,11 +137,18 @@
                                 <action selector="dismissDocumentViewController" destination="M2k-L8-Olo" id="vcH-Xj-3m1"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="hdq-1q-Q3H">
-                            <connections>
-                                <action selector="addItem:" destination="M2k-L8-Olo" id="kSh-Ou-Qgh"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" image="chevron.left.slash.chevron.right" catalog="system" id="P8a-Sd-HtY">
+                                <connections>
+                                    <action selector="inspectWithJS" destination="M2k-L8-Olo" id="pHe-Uh-GFB"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="add" id="hdq-1q-Q3H">
+                                <connections>
+                                    <action selector="addItem:" destination="M2k-L8-Olo" id="kSh-Ou-Qgh"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="accessoryView" destination="nj2-Oj-FVv" id="wkE-gl-3am"/>
@@ -172,4 +179,7 @@
             <point key="canvasLocation" x="1029.5999999999999" y="653.52323838080963"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="chevron.left.slash.chevron.right" catalog="system" width="64" height="48"/>
+    </resources>
 </document>

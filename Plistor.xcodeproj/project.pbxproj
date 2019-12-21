@@ -16,6 +16,10 @@
 		C935AA5923A445FC00C9B34A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C935AA5823A445FC00C9B34A /* Assets.xcassets */; };
 		C935AA5C23A445FC00C9B34A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C935AA5A23A445FC00C9B34A /* LaunchScreen.storyboard */; };
 		C935AA6623A4477500C9B34A /* Property List.plist in Resources */ = {isa = PBXBuildFile; fileRef = C935AA6523A4477500C9B34A /* Property List.plist */; };
+		C95853FE23AC4ED2001B26CE /* MovableTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95853FD23AC4ED2001B26CE /* MovableTextField.swift */; };
+		C958540023AC4F26001B26CE /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95853FF23AC4F26001B26CE /* ConsoleViewController.swift */; };
+		C958540223AC4FF7001B26CE /* TextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = C958540123AC4FF7001B26CE /* TextField.xib */; };
+		C958540623AC545E001B26CE /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C958540523AC545E001B26CE /* UITextView.swift */; };
 		C97E7A4123A842170061DAE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97E7A4023A842170061DAE2 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +36,10 @@
 		C935AA5B23A445FC00C9B34A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C935AA5D23A445FC00C9B34A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C935AA6523A4477500C9B34A /* Property List.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Property List.plist"; sourceTree = "<group>"; };
+		C95853FD23AC4ED2001B26CE /* MovableTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovableTextField.swift; sourceTree = "<group>"; };
+		C95853FF23AC4F26001B26CE /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
+		C958540123AC4FF7001B26CE /* TextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextField.xib; sourceTree = "<group>"; };
+		C958540523AC545E001B26CE /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
 		C97BD6E823A9B5ED00CB4681 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C97E7A4023A842170061DAE2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,7 +80,11 @@
 				C97E7A4023A842170061DAE2 /* SceneDelegate.swift */,
 				C935AA4F23A445FA00C9B34A /* DocumentBrowserViewController.swift */,
 				C935AA5123A445FA00C9B34A /* DocumentViewController.swift */,
+				C95853FF23AC4F26001B26CE /* ConsoleViewController.swift */,
 				C935AA5323A445FA00C9B34A /* Document.swift */,
+				C95853FD23AC4ED2001B26CE /* MovableTextField.swift */,
+				C958540523AC545E001B26CE /* UITextView.swift */,
+				C958540123AC4FF7001B26CE /* TextField.xib */,
 				C935AA5523A445FA00C9B34A /* Main.storyboard */,
 				C935AA5823A445FC00C9B34A /* Assets.xcassets */,
 				C935AA5A23A445FC00C9B34A /* LaunchScreen.storyboard */,
@@ -144,6 +156,7 @@
 				C935AA5C23A445FC00C9B34A /* LaunchScreen.storyboard in Resources */,
 				C935AA5923A445FC00C9B34A /* Assets.xcassets in Resources */,
 				C935AA6623A4477500C9B34A /* Property List.plist in Resources */,
+				C958540223AC4FF7001B26CE /* TextField.xib in Resources */,
 				C903DD6823A5430900CEA7AF /* Property List.json in Resources */,
 				C935AA5723A445FA00C9B34A /* Main.storyboard in Resources */,
 			);
@@ -156,9 +169,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C95853FE23AC4ED2001B26CE /* MovableTextField.swift in Sources */,
+				C958540623AC545E001B26CE /* UITextView.swift in Sources */,
 				C97E7A4123A842170061DAE2 /* SceneDelegate.swift in Sources */,
 				C935AA5423A445FA00C9B34A /* Document.swift in Sources */,
 				C935AA5223A445FA00C9B34A /* DocumentViewController.swift in Sources */,
+				C958540023AC4F26001B26CE /* ConsoleViewController.swift in Sources */,
 				C935AA5023A445FA00C9B34A /* DocumentBrowserViewController.swift in Sources */,
 				C935AA4E23A445FA00C9B34A /* AppDelegate.swift in Sources */,
 			);

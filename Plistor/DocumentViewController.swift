@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import JavaScriptCore
 
 /// The Plist / JSON editor.
-class DocumentViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate {
+class DocumentViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, UIContextMenuInteractionDelegate {
     
     /// The color for representing String values.
     static let stringColor = UIColor.systemRed
@@ -84,6 +85,12 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
     /// The key for current value.
     var key: String?
     
+    /// A boolean indicating whether the file should be saved after setting `element`.
+    var save = true
+    
+    /// A boolean indicating whether the root element should be synced.
+    var syncsElement = true
+    
     /// The object represented by the editor. May not be the root object,
     var element: Any = [String:Any]() {
         didSet {
@@ -108,6 +115,11 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
                 }
                 
                 textView.text = (try? String(contentsOf: url)) ?? ""
+            }
+            
+            guard save else {
+                save = true
+                return
             }
             
             guard let key = key else {
@@ -259,6 +271,8 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
                         setValue(Data())
                     case "Date":
                         setValue(Date())
+                    case "Null":
+                        setValue(NSNull())
                     default:
                         break
                     }
@@ -294,6 +308,22 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             tableView.isHidden = true
             accessoryView.isHidden = false
         }
+    }
+    
+    /// Inspects the current element with JavaScript.
+    @IBAction func inspectWithJS() {
+        
+        guard let context = JSContext() else {
+            return
+        }
+        context.setObject(element, forKeyedSubscript: "value" as NSCopying & NSObjectProtocol)
+        
+        let console = ConsoleViewController()
+        console.context = context
+        console.editor = self
+        let navVC = UINavigationController(rootViewController: console)
+        navVC.modalPresentationStyle = .fullScreen
+        self.present(navVC, animated: true, completion: nil)
     }
     
     private var mode: Int {
@@ -415,6 +445,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             cell.textLabel?.attributedText = attrString
             cell.detailTextLabel?.text = "▿"
             
+            cell.addInteraction(UIContextMenuInteraction(delegate: self))
             return cell
         }
         
@@ -441,7 +472,8 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
                     cell.detailTextLabel?.text = "\(element[key] ?? "")"
                 }
             }
-                        
+            
+            cell.addInteraction(UIContextMenuInteraction(delegate: self))
             return cell
         } else if let element = element as? NSArray {
             let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
@@ -462,6 +494,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
                 }
             }
             
+            cell.addInteraction(UIContextMenuInteraction(delegate: self))
             return cell
         } else {
             return UITableViewCell()
@@ -507,9 +540,11 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
     // MARK: - Table view delegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let isPresentedFromContextMenu = tableView.indexPathForSelectedRow == nil // If there is no selected row, this function is called manually
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let key: String?
+        var key: String?
         
         if indexPath.row != 0 {
             key = (element as? NSDictionary)?.allKeys[indexPath.row-1] as? String
@@ -519,7 +554,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             key = self.key ?? "Root"
         }
         
-        let _value: Any?
+        var _value: Any?
         
         if let key = key, let element = self.element as? [String:Any] {
             _value = element[key]
@@ -530,6 +565,22 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         func showSheet() {
+                        
+            if indexPath.row != 0 {
+                key = (element as? NSDictionary)?.allKeys[indexPath.row-1] as? String
+            } else if element is NSArray && indexPath.row != 0 {
+                key = nil
+            } else {
+                key = self.key ?? "Root"
+            }
+                        
+            if let key = key, let element = self.element as? [String:Any] {
+                _value = element[key]
+            } else if let element = self.element as? [Any], indexPath.row != 0 {
+                _value = element[indexPath.row-1]
+            } else {
+                _value = nil
+            }
             
             let alert = UIAlertController(title: key ?? "\(indexPath.row-1)", message: nil, preferredStyle: .actionSheet)
             
@@ -629,162 +680,165 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
                 self.present(typesAlert, animated: true, completion: nil)
             }
             
+            func changeValue() {
+                guard let value = _value else {
+                    return
+                }
+                
+                let valueAlert = UIAlertController(title: alert.title, message: nil, preferredStyle: .actionSheet)
+                
+                let description = "\((value is NSNumber && self.isBoolNumber(num: value as! NSNumber)) ? ((value as! Bool) ? "YES" : "NO") : value)"
+                if !(value is NSNull) {
+                    valueAlert.addAction(UIAlertAction(title: "\(description)".isEmpty ? "Set" : "\(description)", style: .default, handler: { (_) in
+                        
+                        if let num = value as? NSNumber, self.isBoolNumber(num: num) {
+                            let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
+                            
+                            let _switch = UISwitch()
+                            _switch.isOn = (value as? Bool) ?? false
+
+                            let controller = UIViewController()
+
+                            _switch.center = controller.view.center
+                            _switch.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
+                            controller.view.addSubview(_switch)
+
+                            alert.setValue(controller, forKey: "contentViewController")
+                            
+                            alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
+                                setValue(_switch.isOn)
+                            }))
+
+                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+                                showSheet()
+                            }))
+                            
+                            self.present(alert, animated: true, completion: nil)
+                        } else if value is NSNumber {
+                            let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
+                            
+                            var textField: UITextField?
+                            
+                            alert.addTextField { (_textField) in
+                                _textField.keyboardType = .decimalPad
+                                _textField.text = "\(value)"
+                                textField = _textField
+                            }
+                            
+                            alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
+                                if let text = textField?.text?.replacingOccurrences(of: ",", with: "."), !text.isEmpty {
+                                    setValue(NSNumber(value: Float(text) ?? 0))
+                                } else {
+                                    showSheet()
+                                }
+                            }))
+                            
+                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+                                showSheet()
+                            }))
+                            
+                            self.present(alert, animated: true, completion: nil)
+                        } else if value is NSString {
+                            let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
+                            
+                            let textView = UITextView()
+                            textView.text = value as? String
+                            textView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+                            let controller = UIViewController()
+
+                            textView.frame = controller.view.frame
+                            controller.view.addSubview(textView)
+
+                            alert.setValue(controller, forKey: "contentViewController")
+
+                            let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view ?? UIView(), attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: self.view.frame.height * 0.8)
+                            alert.view.addConstraint(height)
+                            
+                            alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
+                                setValue(textView.text ?? "")
+                            }))
+
+                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+                                showSheet()
+                            }))
+                            
+                            self.present(alert, animated: true, completion: {
+                                textView.becomeFirstResponder()
+                            })
+                        } else if let date = value as? Date {
+                            let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
+                            
+                            let picker = UIDatePicker()
+                            picker.datePickerMode = .dateAndTime
+                            picker.date = date
+
+                            let controller = UIViewController()
+                            picker.center = controller.view.center
+                            picker.autoresizingMask = [.flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
+                            controller.view.addSubview(picker)
+
+                            alert.setValue(controller, forKey: "contentViewController")
+                            alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
+                                setValue(picker.date)
+                            }))
+
+                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+                                showSheet()
+                            }))
+                            
+                            self.present(alert, animated: true, completion: nil)
+                        } else if let data = value as? Data {
+                            let alert = UIAlertController(title: key, message: "Change value\nPaste a base 64 encoded string", preferredStyle: .alert)
+                            
+                            let textView = UITextView()
+                            textView.text = data.base64EncodedString()
+                            textView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+                            let controller = UIViewController()
+
+                            textView.frame = controller.view.frame
+                            controller.view.addSubview(textView)
+
+                            alert.setValue(controller, forKey: "contentViewController")
+
+                            let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view ?? UIView(), attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: self.view.frame.height * 0.8)
+                            alert.view.addConstraint(height)
+                            
+                            alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
+                                var components = textView.text.components(separatedBy: "base64,")
+                                if components.count > 1 {
+                                    components.remove(at: 0)
+                                }
+                                setValue(Data(base64Encoded: components.joined()) ?? Data())
+                            }))
+
+                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+                                showSheet()
+                            }))
+                            
+                            self.present(alert, animated: true, completion: {
+                                textView.becomeFirstResponder()
+                            })
+                        }
+                    }))
+                }
+                
+                valueAlert.addAction(UIAlertAction(title: self.type(of: value), style: .default, handler: { (_) in
+                    selectType()
+                }))
+                
+                valueAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                
+                valueAlert.popoverPresentationController?.sourceView = tableView.cellForRow(at: indexPath)
+                valueAlert.popoverPresentationController?.sourceRect = tableView.cellForRow(at: indexPath)?.bounds ?? .zero
+                
+                self.present(valueAlert, animated: true, completion: nil)
+            }
+            
             if indexPath.row != 0 {
                 alert.addAction(UIAlertAction(title: "Change value", style: .default, handler: { (_) in
-                    
-                    guard let value = _value else {
-                        return
-                    }
-                    
-                    let valueAlert = UIAlertController(title: alert.title, message: nil, preferredStyle: .actionSheet)
-                    
-                    let description = "\((value is NSNumber && self.isBoolNumber(num: value as! NSNumber)) ? ((value as! Bool) ? "YES" : "NO") : value)"
-                    if !(value is NSNull) {
-                        valueAlert.addAction(UIAlertAction(title: "\(description)".isEmpty ? "Set" : "\(description)", style: .default, handler: { (_) in
-                            
-                            if let num = value as? NSNumber, self.isBoolNumber(num: num) {
-                                let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
-                                
-                                let _switch = UISwitch()
-                                _switch.isOn = (value as? Bool) ?? false
-
-                                let controller = UIViewController()
-
-                                _switch.center = controller.view.center
-                                _switch.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-                                controller.view.addSubview(_switch)
-
-                                alert.setValue(controller, forKey: "contentViewController")
-                                
-                                alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
-                                    setValue(_switch.isOn)
-                                }))
-
-                                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-                                    showSheet()
-                                }))
-                                
-                                self.present(alert, animated: true, completion: nil)
-                            } else if value is NSNumber {
-                                let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
-                                
-                                var textField: UITextField?
-                                
-                                alert.addTextField { (_textField) in
-                                    _textField.keyboardType = .decimalPad
-                                    _textField.text = "\(value)"
-                                    textField = _textField
-                                }
-                                
-                                alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
-                                    if let text = textField?.text?.replacingOccurrences(of: ",", with: "."), !text.isEmpty {
-                                        setValue(NSNumber(value: Float(text) ?? 0))
-                                    } else {
-                                        showSheet()
-                                    }
-                                }))
-                                
-                                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-                                    showSheet()
-                                }))
-                                
-                                self.present(alert, animated: true, completion: nil)
-                            } else if value is NSString {
-                                let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
-                                
-                                let textView = UITextView()
-                                textView.text = value as? String
-                                textView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-                                let controller = UIViewController()
-
-                                textView.frame = controller.view.frame
-                                controller.view.addSubview(textView)
-
-                                alert.setValue(controller, forKey: "contentViewController")
-
-                                let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view ?? UIView(), attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: self.view.frame.height * 0.8)
-                                alert.view.addConstraint(height)
-                                
-                                alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
-                                    setValue(textView.text ?? "")
-                                }))
-
-                                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-                                    showSheet()
-                                }))
-                                
-                                self.present(alert, animated: true, completion: {
-                                    textView.becomeFirstResponder()
-                                })
-                            } else if let date = value as? Date {
-                                let alert = UIAlertController(title: key, message: "Change value", preferredStyle: .alert)
-                                
-                                let picker = UIDatePicker()
-                                picker.datePickerMode = .dateAndTime
-                                picker.date = date
-
-                                let controller = UIViewController()
-                                picker.center = controller.view.center
-                                picker.autoresizingMask = [.flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
-                                controller.view.addSubview(picker)
-
-                                alert.setValue(controller, forKey: "contentViewController")
-                                alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
-                                    setValue(picker.date)
-                                }))
-
-                                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-                                    showSheet()
-                                }))
-                                
-                                self.present(alert, animated: true, completion: nil)
-                            } else if let data = value as? Data {
-                                let alert = UIAlertController(title: key, message: "Change value\nPaste a base 64 encoded string", preferredStyle: .alert)
-                                
-                                let textView = UITextView()
-                                textView.text = data.base64EncodedString()
-                                textView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-                                let controller = UIViewController()
-
-                                textView.frame = controller.view.frame
-                                controller.view.addSubview(textView)
-
-                                alert.setValue(controller, forKey: "contentViewController")
-
-                                let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view ?? UIView(), attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: self.view.frame.height * 0.8)
-                                alert.view.addConstraint(height)
-                                
-                                alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
-                                    var components = textView.text.components(separatedBy: "base64,")
-                                    if components.count > 1 {
-                                        components.remove(at: 0)
-                                    }
-                                    setValue(Data(base64Encoded: components.joined()) ?? Data())
-                                }))
-
-                                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-                                    showSheet()
-                                }))
-                                
-                                self.present(alert, animated: true, completion: {
-                                    textView.becomeFirstResponder()
-                                })
-                            }
-                        }))
-                    }
-                    
-                    valueAlert.addAction(UIAlertAction(title: self.type(of: value), style: .default, handler: { (_) in
-                        selectType()
-                    }))
-                    
-                    valueAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                    
-                    valueAlert.popoverPresentationController?.sourceView = tableView.cellForRow(at: indexPath)
-                    valueAlert.popoverPresentationController?.sourceRect = tableView.cellForRow(at: indexPath)?.bounds ?? .zero
-                    
-                    self.present(valueAlert, animated: true, completion: nil)
+                    changeValue()
                 }))
             } else {
                 alert.addAction(UIAlertAction(title: self.type(of: element), style: .default, handler: { (_) in
@@ -860,7 +914,12 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             
             alert.popoverPresentationController?.sourceView = tableView.cellForRow(at: indexPath)
             alert.popoverPresentationController?.sourceRect = tableView.cellForRow(at: indexPath)?.bounds ?? .zero
-            present(alert, animated: true, completion: nil)
+        
+            if !isPresentedFromContextMenu {
+                present(alert, animated: true, completion: nil)
+            } else {
+                changeValue()
+            }
             
             return
         }
@@ -878,6 +937,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             
             vc.navigationItem.largeTitleDisplayMode = .never
             
+            vc.isDocOpen = isDocOpen
             vc.document = document
             vc.key = key ?? "\(indexPath.row-1)"
             vc.element = (element as? NSArray)?[indexPath.row-1] ?? (element as? NSDictionary)?[vc.key ?? ""] ?? [String:Any]()
@@ -911,5 +971,253 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         tableView.reloadData()
+    }
+    
+    // MARK: - Context menu interaction delegate
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard let cell = interaction.view as? UITableViewCell else {
+            return nil
+        }
+        
+        guard let indexPath = self.tableView.indexPath(for: cell) else {
+            return nil
+        }
+        
+        let key: String?
+        
+        if indexPath.row != 0 {
+            key = (element as? NSDictionary)?.allKeys[indexPath.row-1] as? String
+        } else if element is NSArray && indexPath.row != 0 {
+            key = nil
+        } else {
+            key = self.key ?? "Root"
+        }
+        
+        let _value: Any?
+        if let key = key, let element = self.element as? [String:Any] {
+            _value = element[key]
+        } else if let element = self.element as? [Any], indexPath.row != 0 {
+            _value = element[indexPath.row-1]
+        } else {
+            _value = nil
+        }
+        
+        guard let value = _value else {
+            return nil
+        }
+        
+        var stringValue: String {
+            if value is NSDictionary || value is NSArray {
+                let pathExtension = self.document?.fileURL.pathExtension.lowercased()
+                if pathExtension == "json" {
+                    if let data = try? JSONSerialization.data(withJSONObject: value, options: JSONSerialization.WritingOptions.prettyPrinted), let str = String(data: data, encoding: .utf8) {
+                        return str
+                    }
+                } else if pathExtension == "plist" {
+                    
+                    let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("tmp.plist")
+                    
+                    if let propertyListDict = value as? [String:Any] {
+                        let dict = NSDictionary(dictionary: propertyListDict)
+                        try? dict.write(to: url)
+                    } else if let propertyListArray = value as? [Any] {
+                        let arr = NSArray(array: propertyListArray)
+                        try? arr.write(to: url)
+                    }
+                    
+                    return (try? String(contentsOf: url)) ?? ""
+                }
+            } else {
+                return "\(value)"
+            }
+            
+            return ""
+        }
+        
+        let edit = UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { action in
+            self.tableView(self.tableView, didSelectRowAt: indexPath)
+        }
+        
+        let duplicate = UIAction(title: "Duplicate", image: UIImage(systemName: "doc.on.doc.fill")) { action in
+            
+            guard let key = key else {
+                return
+            }
+            
+            if let arr = self.element as? NSArray {
+                let mutable = NSMutableArray(array: arr)
+                mutable.insert(value, at: indexPath.row+1)
+                self.element = mutable
+                self.tableView.reloadData()
+            } else if let dict = self.element as? NSDictionary {
+                let mutable = NSMutableDictionary(dictionary: dict)
+                
+                var i = 1
+                
+                var _key = key
+                
+                while let last = _key.last, Int(String(last)) != nil {
+                    _key.removeLast()
+                }
+                
+                var newKey: String {
+                    return _key+"\(i)"
+                }
+                
+                while dict[newKey] != nil {
+                    i += 1
+                }
+                
+                mutable[newKey] = value
+                
+                self.element = mutable
+                self.tableView.reloadData()
+            }
+        }
+        
+        let rename = UIAction(title: "Rename", image: UIImage(systemName: "tag.fill")) { action in
+            
+            if let dict = self.element as? NSDictionary, indexPath.row != 0, let key = key {
+                let keyAlert = UIAlertController(title: key, message: "Change key", preferredStyle: .alert)
+                
+                var textField: UITextField?
+                
+                keyAlert.addTextField { (_textField) in
+                    _textField.text = key
+                    textField = _textField
+                }
+                
+                keyAlert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { (_) in
+                    if let textField = textField, let str = textField.text, !str.isEmpty {
+                        let mutable = NSMutableDictionary(dictionary: dict)
+                        let obj = mutable[key]
+                        mutable.removeObject(forKey: key)
+                        mutable[str] = obj
+                        self.element = mutable
+                        
+                        self.tableView.reloadData()
+                    }
+                }))
+                
+                keyAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                
+                self.present(keyAlert, animated: true, completion: nil)
+            }
+        }
+        
+        let copy = UIAction(title: "Copy value", image: UIImage(systemName: "doc.on.clipboard")) { action in
+            UIPasteboard.general.string = stringValue
+        }
+        
+        let newWindow = UIAction(title: "Open in new Window", image: UIImage(systemName: "plus.square.fill")) { action in
+            
+            guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "DocumentViewController") as? DocumentViewController else {
+                return
+            }
+            
+            vc.loadViewIfNeeded()
+            
+            vc.navigationItem.largeTitleDisplayMode = .never
+            
+            vc.document = self.document
+            vc.key = key ?? "\(indexPath.row-1)"
+            vc.element = (self.element as? NSArray)?[indexPath.row-1] ?? (self.element as? NSDictionary)?[vc.key ?? ""] ?? [String:Any]()
+            vc.parentElement = self
+            
+            SceneDelegate.customViewController = UINavigationController(rootViewController: vc)
+            UIApplication.shared.requestSceneSessionActivation(nil, userActivity: nil, options: nil, errorHandler: nil)
+        }
+        
+        let inspectWithJS = UIAction(title: "Inspect with JavaScript", image: UIImage(systemName: "chevron.left.slash.chevron.right")) { action in
+            guard let context = JSContext() else {
+                return
+            }
+            context.setObject(value, forKeyedSubscript: "value" as NSCopying & NSObjectProtocol)
+            
+            let console = ConsoleViewController()
+            console.context = context
+            console.editor = self
+            console.key = key ?? "\(indexPath.row-1)"
+            let navVC = UINavigationController(rootViewController: console)
+            navVC.modalPresentationStyle = .fullScreen
+            self.present(navVC, animated: true, completion: nil)
+        }
+        
+        let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
+            
+            if indexPath.row == 0 {
+                if let key = self.key, let element = self.parentElement?.element as? [String:Any] {
+                    let dict = NSMutableDictionary(dictionary: element)
+                    dict[key] = nil
+                    self.parentElement?.element = dict
+                } else if let element = self.parentElement?.element as? [Any] {
+                    let arr = NSMutableArray(array: element)
+                    arr.removeObject(at: indexPath.row)
+                    self.parentElement?.element = arr
+                }
+                
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                if let key = key, let element = self.element as? [String:Any] {
+                    let dict = NSMutableDictionary(dictionary: element)
+                    dict[key] = nil
+                    self.element = dict
+                } else if let element = self.element as? [Any] {
+                    let arr = NSMutableArray(array: element)
+                    arr.removeObject(at: indexPath.row-1)
+                    self.element = arr
+                }
+                
+                self.tableView.reloadData()
+            }
+        }
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            
+            let vc = UIViewController()
+            
+            vc.view = UITextView()
+            
+            let textView = (vc.view as! UITextView)
+            textView.text = stringValue
+            textView.backgroundColor = .systemBackground
+            textView.textColor = .label
+            textView.font = UIFont(name: "Menlo", size: UIFont.systemFontSize)
+            
+            return vc
+        }) { (_) -> UIMenu? in
+            
+            let children: [UIAction]
+            
+            if indexPath.row == 0 {
+                children = [delete]
+            } else if UIDevice.current.userInterfaceIdiom == .pad {
+                if self.element is NSDictionary {
+                    if value is NSDictionary || value is NSArray {
+                        children = [edit, inspectWithJS, rename, duplicate, copy, newWindow, delete]
+                    } else {
+                        children = [edit, inspectWithJS, rename, duplicate, copy, delete]
+                    }
+                } else if self.element is NSArray {
+                    if value is NSDictionary || value is NSArray {
+                        children = [edit, inspectWithJS, duplicate, copy, newWindow, delete]
+                    } else {
+                        children = [edit, inspectWithJS, duplicate, copy, delete]
+                    }
+                } else {
+                    children = [edit, inspectWithJS, duplicate, copy, delete]
+                }
+            } else {
+                if self.element is NSDictionary {
+                    children = [edit, inspectWithJS, rename, duplicate, copy, delete]
+                } else {
+                    children = [edit, inspectWithJS, duplicate, copy, delete]
+                }
+            }
+            
+            return UIMenu(title: cell.textLabel?.text ?? "", children: children)
+        }
     }
 }

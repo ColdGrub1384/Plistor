@@ -16,12 +16,44 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         return window?.rootViewController as? DocumentBrowserViewController
     }
     
+    /// A view controller to present on a new scene.
+    static var customViewController: UIViewController?
+    
     // MARK: - Scene delegate
     
     var window: UIWindow?
     
     @available(iOS 13.0, *)
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        
+        if let customVC = SceneDelegate.customViewController {
+            
+            class ViewController: UIViewController {
+                
+                var presented = false
+                
+                var vc: UIViewController!
+                
+                override func viewDidAppear(_ animated: Bool) {
+                    super.viewWillAppear(animated)
+                    
+                    if presented, let session = view.window?.windowScene?.session {
+                        UIApplication.shared.requestSceneSessionDestruction(session, options: nil, errorHandler: nil)
+                    } else {
+                        vc.modalPresentationStyle = .fullScreen
+                        present(vc, animated: false, completion: nil)
+                        presented = true
+                    }
+                }
+            }
+            
+            let vc = ViewController()
+            vc.vc = customVC
+            window?.rootViewController = vc
+            
+            SceneDelegate.customViewController = nil
+            return
+        }
         
         if connectionOptions.urlContexts.count > 0 {
             self.scene(scene, openURLContexts: connectionOptions.urlContexts)
