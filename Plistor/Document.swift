@@ -55,5 +55,65 @@ class Document: UIDocument {
         
         self.error = error
     }
+    
+    override func presentedItemDidChange() {
+        super.presentedItemDidChange()
+        
+        do {
+            if fileURL.pathExtension.lowercased() == "plist" {
+                propertyList = (NSDictionary(contentsOfFile: fileURL.path) ?? NSArray(contentsOf: fileURL)) ?? [String:Any]()
+            } else if fileURL.pathExtension.lowercased() == "json" {
+                let data = try Data(contentsOf: fileURL)
+                propertyList = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+            }
+            
+            DispatchQueue.main.async {
+                for scence in UIApplication.shared.connectedScenes {
+                    let vcs = ((scence as? UIWindowScene)?.windows.first?.rootViewController?.presentedViewController as? UINavigationController)?.viewControllers ?? []
+                    for vc in vcs {
+                        if let vc = vc as? DocumentViewController {
+                            
+                            guard vc.document?.fileURL == self.fileURL else {
+                                continue
+                            }
+                            
+                            guard vc.syncsElement else {
+                                vc.syncsElement = true
+                                continue
+                            }
+                            
+                            guard let key = vc.key else {
+                                vc.save = false
+                                vc.element = self.propertyList
+                                vc.tableView.reloadData()
+                                continue
+                            }
+                            
+                            vc.syncsElement = false
+                            if let arr = vc.parentElement?.element as? NSArray, let i = Int(key), arr.count > i  {
+                                if let item = arr[i] as? NSArray, item != (vc.element as? NSArray) {
+                                    vc.element = arr[i]
+                                } else if let item = arr[i] as? NSDictionary, item != (vc.element as? NSDictionary) {
+                                    vc.element = arr[i]
+                                }
+                            } else if let dict = vc.parentElement?.element as? NSDictionary {
+                                if let item = dict[key] as? NSArray, item != (vc.element as? NSArray) {
+                                    vc.element = dict[key] ?? vc.element
+                                } else if let item = dict[key] as? NSDictionary, item != (vc.element as? NSDictionary) {
+                                    vc.element = dict[key] ?? vc.element
+                                }
+                            } else {
+                                vc.element = self.propertyList
+                            }
+                            vc.tableView.reloadData()
+                            vc.syncsElement = true
+                        }
+                    }
+                }
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
 
