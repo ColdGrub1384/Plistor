@@ -532,8 +532,6 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             mutable.removeObject(at: sourceIndexPath.row-1)
             mutable.insert(item, at: destinationIndexPath.row-1)
             element = mutable
-            
-            tableView.reloadData()
         }
     }
     
