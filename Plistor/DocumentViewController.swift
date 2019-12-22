@@ -180,9 +180,24 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
     
     /// Dismisses the editor.
     @IBAction func dismissDocumentViewController() {
+        
+        #if APP_EXTENSION
+        let alert = UIAlertController(title: "Save file", message: "Do you want to save this file?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+            let picker = UIDocumentPickerViewController(url: self.document?.fileURL ?? URL(fileURLWithPath: "/"), in: .exportToService)
+            picker.delegate = self
+            self.present(picker, animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Don't save", style: .destructive, handler: { (_) in
+            self.view.window?.rootViewController?.children.first?.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+        #else
         dismiss(animated: true) {
             self.document?.close(completionHandler: nil)
         }
+        #endif
     }
 
     /// Adds an item to the current Dictionary or Array.
@@ -1109,6 +1124,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             UIPasteboard.general.string = stringValue
         }
         
+        #if !APP_EXTENSION
         let newWindow = UIAction(title: "Open in new Window", image: UIImage(systemName: "plus.square.fill")) { action in
             
             guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "DocumentViewController") as? DocumentViewController else {
@@ -1127,6 +1143,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             SceneDelegate.customViewController = UINavigationController(rootViewController: vc)
             UIApplication.shared.requestSceneSessionActivation(nil, userActivity: nil, options: nil, errorHandler: nil)
         }
+        #endif
         
         let inspectWithJS = UIAction(title: "Inspect with JavaScript", image: UIImage(systemName: "chevron.left.slash.chevron.right")) { action in
             guard let context = JSContext() else {
@@ -1192,6 +1209,7 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
             if indexPath.row == 0 {
                 children = [delete]
             } else if UIDevice.current.userInterfaceIdiom == .pad {
+                #if !APP_EXTENSION
                 if self.element is NSDictionary {
                     if value is NSDictionary || value is NSArray {
                         children = [edit, inspectWithJS, rename, duplicate, copy, newWindow, delete]
@@ -1207,6 +1225,13 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
                 } else {
                     children = [edit, inspectWithJS, duplicate, copy, delete]
                 }
+                #else
+                if self.element is NSDictionary {
+                    children = [edit, inspectWithJS, rename, duplicate, copy, delete]
+                } else {
+                    children = [edit, inspectWithJS, duplicate, copy, delete]
+                }
+                #endif
             } else {
                 if self.element is NSDictionary {
                     children = [edit, inspectWithJS, rename, duplicate, copy, delete]
@@ -1219,3 +1244,16 @@ class DocumentViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
 }
+
+#if APP_EXTENSION
+extension DocumentViewController: UIDocumentPickerDelegate {
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        view.window?.rootViewController?.children.first?.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        view.window?.rootViewController?.children.first?.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    }
+}
+#endif

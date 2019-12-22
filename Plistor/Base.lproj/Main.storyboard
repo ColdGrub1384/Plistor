@@ -163,7 +163,7 @@
         <!--Navigation Controller-->
         <scene sceneID="M2v-8I-6W8">
             <objects>
-                <navigationController storyboardIdentifier="editor" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bkh-oq-lBc" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="editor" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bkh-oq-lBc" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="pvJ-dz-KtX">
                         <rect key="frame" x="0.0" y="0.0" width="1080" height="102"/>

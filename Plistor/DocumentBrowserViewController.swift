@@ -7,6 +7,9 @@
 //
 
 import UIKit
+#if APP_EXTENSION
+import MobileCoreServices
+#endif
 
 /// The main document browser view controller.
 class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocumentBrowserViewControllerDelegate, UIViewControllerTransitioningDelegate {
@@ -27,6 +30,41 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        #if APP_EXTENSION
+        let extensionItem = extensionContext?.inputItems.first as? NSExtensionItem
+        let itemProvider = extensionItem?.attachments?.first
+        let propertyList = String(kUTTypePropertyList)
+        if itemProvider?.hasItemConformingToTypeIdentifier(propertyList) == true {
+            itemProvider?.loadItem(forTypeIdentifier: propertyList, options: nil, completionHandler: { (item, error) -> Void in
+                let dictionary = item as? NSDictionary
+                OperationQueue.main.addOperation {
+                    let results = dictionary?[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary
+                    
+                    let title = (results?["name"] as? String) ?? "Property List"
+                    
+                    if let content = results?["content"] as? String {
+                        if (try? JSONSerialization.jsonObject(with: content.data(using: .utf8) ?? Data(), options: [])) != nil {
+                            var tmpURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(title)
+                            if NSString(string: title).pathExtension.lowercased() != "json" {
+                                tmpURL = tmpURL.appendingPathExtension("json")
+                            }
+                            try? content.write(to: tmpURL, atomically: true, encoding: .utf8)
+                            self.presentDocument(at: tmpURL)
+                        } else {
+                            var tmpURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(title)
+                            if NSString(string: title).pathExtension.lowercased() != "plist" {
+                                tmpURL = tmpURL.appendingPathExtension("plist")
+                            }
+                            try? content.write(to: tmpURL, atomically: true, encoding: .utf8)
+                            self.presentDocument(at: tmpURL)
+                        }
+                    }
+                    
+                }
+            })
+        }
+        #endif
         
         if let doc = documentURL {
             documentURL = nil
@@ -103,11 +141,13 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
         documentViewController.document = doc
         navVC.modalPresentationStyle = .fullScreen
         
+        #if !APP_EXTENSION
         transitionController = transitionController(forDocumentAt: documentURL)
         transitionController?.loadingProgress = doc.progress
         transitionController?.targetView = navVC.view
         
         navVC.transitioningDelegate = self
+        #endif
         
         present(navVC, animated: true, completion: nil)
     }

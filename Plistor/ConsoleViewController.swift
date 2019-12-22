@@ -91,6 +91,8 @@ class ConsoleViewController: UIViewController {
         
         movableTextField = MovableTextField(console: self)
         movableTextField?.placeholder = "> "
+        movableTextField?.textField.inputAssistantItem.leadingBarButtonGroups = []
+        movableTextField?.textField.inputAssistantItem.trailingBarButtonGroups = []
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
         

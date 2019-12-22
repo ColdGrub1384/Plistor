@@ -59,6 +59,7 @@ class Document: UIDocument {
     override func presentedItemDidChange() {
         super.presentedItemDidChange()
         
+        #if !APP_EXTENSION
         do {
             if fileURL.pathExtension.lowercased() == "plist" {
                 propertyList = (NSDictionary(contentsOfFile: fileURL.path) ?? NSArray(contentsOf: fileURL)) ?? [String:Any]()
@@ -114,6 +115,7 @@ class Document: UIDocument {
         } catch {
             print(error.localizedDescription)
         }
+        #endif
     }
 }
 

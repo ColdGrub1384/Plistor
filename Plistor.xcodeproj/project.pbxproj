@@ -8,6 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		C903DD6823A5430900CEA7AF /* Property List.json in Resources */ = {isa = PBXBuildFile; fileRef = C903DD6723A5430900CEA7AF /* Property List.json */; };
+		C9304B8C23AEB810000B9388 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9304B8B23AEB810000B9388 /* Media.xcassets */; };
+		C9304B9523AEB810000B9388 /* View JSON or Plist.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C9304B8923AEB810000B9388 /* View JSON or Plist.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C9304B9B23AEBE61000B9388 /* ExtensionPreProcessing.js in Resources */ = {isa = PBXBuildFile; fileRef = C9304B9A23AEBE61000B9388 /* ExtensionPreProcessing.js */; };
+		C9304B9C23AEC454000B9388 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C935AA5523A445FA00C9B34A /* Main.storyboard */; };
+		C9304B9D23AEC45B000B9388 /* TextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = C958540123AC4FF7001B26CE /* TextField.xib */; };
+		C9304B9E23AEC46B000B9388 /* DocumentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935AA5123A445FA00C9B34A /* DocumentViewController.swift */; };
+		C9304B9F23AEC46B000B9388 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95853FF23AC4F26001B26CE /* ConsoleViewController.swift */; };
+		C9304BA023AEC46B000B9388 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935AA5323A445FA00C9B34A /* Document.swift */; };
+		C9304BA123AEC46B000B9388 /* MovableTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95853FD23AC4ED2001B26CE /* MovableTextField.swift */; };
+		C9304BA223AEC46B000B9388 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C958540523AC545E001B26CE /* UITextView.swift */; };
+		C9304BA323AECAA6000B9388 /* DocumentBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935AA4F23A445FA00C9B34A /* DocumentBrowserViewController.swift */; };
 		C935AA4E23A445FA00C9B34A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935AA4D23A445FA00C9B34A /* AppDelegate.swift */; };
 		C935AA5023A445FA00C9B34A /* DocumentBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935AA4F23A445FA00C9B34A /* DocumentBrowserViewController.swift */; };
 		C935AA5223A445FA00C9B34A /* DocumentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935AA5123A445FA00C9B34A /* DocumentViewController.swift */; };
@@ -23,9 +34,37 @@
 		C97E7A4123A842170061DAE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97E7A4023A842170061DAE2 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C9304B9323AEB810000B9388 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C935AA4223A445FA00C9B34A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9304B8823AEB810000B9388;
+			remoteInfo = "View JSON or Plist";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9304B9623AEB810000B9388 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C9304B9523AEB810000B9388 /* View JSON or Plist.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		C903DD6723A5430900CEA7AF /* Property List.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Property List.json"; sourceTree = "<group>"; };
 		C903DD6923A5452200CEA7AF /* Plistor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Plistor.entitlements; sourceTree = "<group>"; };
+		C9304B8923AEB810000B9388 /* View JSON or Plist.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "View JSON or Plist.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9304B8B23AEB810000B9388 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		C9304B9223AEB810000B9388 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9304B9A23AEBE61000B9388 /* ExtensionPreProcessing.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ExtensionPreProcessing.js; sourceTree = "<group>"; };
 		C935AA4A23A445FA00C9B34A /* Plistor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plistor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C935AA4D23A445FA00C9B34A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C935AA4F23A445FA00C9B34A /* DocumentBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentBrowserViewController.swift; sourceTree = "<group>"; };
@@ -45,6 +84,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C9304B8623AEB810000B9388 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C935AA4723A445FA00C9B34A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,11 +101,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C9304B8A23AEB810000B9388 /* View JSON or Plist */ = {
+			isa = PBXGroup;
+			children = (
+				C9304B8B23AEB810000B9388 /* Media.xcassets */,
+				C9304B9223AEB810000B9388 /* Info.plist */,
+				C9304B9A23AEBE61000B9388 /* ExtensionPreProcessing.js */,
+			);
+			path = "View JSON or Plist";
+			sourceTree = "<group>";
+		};
 		C935AA4123A445FA00C9B34A = {
 			isa = PBXGroup;
 			children = (
 				C97BD6E823A9B5ED00CB4681 /* README.md */,
 				C935AA4C23A445FA00C9B34A /* Plistor */,
+				C9304B8A23AEB810000B9388 /* View JSON or Plist */,
 				C935AA4B23A445FA00C9B34A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				C935AA4A23A445FA00C9B34A /* Plistor.app */,
+				C9304B8923AEB810000B9388 /* View JSON or Plist.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -98,6 +156,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C9304B8823AEB810000B9388 /* View JSON or Plist */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9304B9923AEB810000B9388 /* Build configuration list for PBXNativeTarget "View JSON or Plist" */;
+			buildPhases = (
+				C9304B8523AEB810000B9388 /* Sources */,
+				C9304B8623AEB810000B9388 /* Frameworks */,
+				C9304B8723AEB810000B9388 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "View JSON or Plist";
+			productName = "View JSON or Plist";
+			productReference = C9304B8923AEB810000B9388 /* View JSON or Plist.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		C935AA4923A445FA00C9B34A /* Plistor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C935AA6023A445FC00C9B34A /* Build configuration list for PBXNativeTarget "Plistor" */;
@@ -105,10 +180,12 @@
 				C935AA4623A445FA00C9B34A /* Sources */,
 				C935AA4723A445FA00C9B34A /* Frameworks */,
 				C935AA4823A445FA00C9B34A /* Resources */,
+				C9304B9623AEB810000B9388 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C9304B9423AEB810000B9388 /* PBXTargetDependency */,
 			);
 			name = Plistor;
 			productName = Plistor;
@@ -125,6 +202,9 @@
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Adrian Labbé";
 				TargetAttributes = {
+					C9304B8823AEB810000B9388 = {
+						CreatedOnToolsVersion = 11.2.1;
+					};
 					C935AA4923A445FA00C9B34A = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -144,11 +224,23 @@
 			projectRoot = "";
 			targets = (
 				C935AA4923A445FA00C9B34A /* Plistor */,
+				C9304B8823AEB810000B9388 /* View JSON or Plist */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C9304B8723AEB810000B9388 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9304B9C23AEC454000B9388 /* Main.storyboard in Resources */,
+				C9304B8C23AEB810000B9388 /* Media.xcassets in Resources */,
+				C9304B9B23AEBE61000B9388 /* ExtensionPreProcessing.js in Resources */,
+				C9304B9D23AEC45B000B9388 /* TextField.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C935AA4823A445FA00C9B34A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -165,6 +257,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C9304B8523AEB810000B9388 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9304BA023AEC46B000B9388 /* Document.swift in Sources */,
+				C9304BA223AEC46B000B9388 /* UITextView.swift in Sources */,
+				C9304B9F23AEC46B000B9388 /* ConsoleViewController.swift in Sources */,
+				C9304B9E23AEC46B000B9388 /* DocumentViewController.swift in Sources */,
+				C9304BA323AECAA6000B9388 /* DocumentBrowserViewController.swift in Sources */,
+				C9304BA123AEC46B000B9388 /* MovableTextField.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C935AA4623A445FA00C9B34A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -181,6 +286,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C9304B9423AEB810000B9388 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9304B8823AEB810000B9388 /* View JSON or Plist */;
+			targetProxy = C9304B9323AEB810000B9388 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		C935AA5523A445FA00C9B34A /* Main.storyboard */ = {
@@ -202,6 +315,52 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		C9304B9723AEB810000B9388 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y96PL6G497;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				INFOPLIST_FILE = "View JSON or Plist/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				OTHER_CFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "ch.ada.Plistor.View-JSON-or-Plist";
+				PRODUCT_NAME = "View JSON or Plist";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG APP_EXTENSION";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9304B9823AEB810000B9388 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y96PL6G497;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				INFOPLIST_FILE = "View JSON or Plist/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				OTHER_CFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "ch.ada.Plistor.View-JSON-or-Plist";
+				PRODUCT_NAME = "View JSON or Plist";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = APP_EXTENSION;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C935AA5E23A445FC00C9B34A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -319,6 +478,7 @@
 		C935AA6123A445FC00C9B34A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Plistor/Plistor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -341,6 +501,7 @@
 		C935AA6223A445FC00C9B34A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Plistor/Plistor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -363,6 +524,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C9304B9923AEB810000B9388 /* Build configuration list for PBXNativeTarget "View JSON or Plist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9304B9723AEB810000B9388 /* Debug */,
+				C9304B9823AEB810000B9388 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C935AA4523A445FA00C9B34A /* Build configuration list for PBXProject "Plistor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
