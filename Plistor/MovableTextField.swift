@@ -85,6 +85,11 @@ class MovableTextField: NSObject, UITextFieldDelegate {
             var r = notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
             r = console.textView.convert(r, from:nil)
             toolbar.frame.origin.y = console.view.frame.height-r.height-toolbar.frame.height
+            #if APP_EXTENSION
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                toolbar.frame.origin.y -= 22
+            }
+            #endif
         }
         
         UIView.animate(withDuration: 0.5) {

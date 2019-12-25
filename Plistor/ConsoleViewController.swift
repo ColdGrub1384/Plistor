@@ -209,6 +209,12 @@ class ConsoleViewController: UIViewController {
             let point = (view.window)?.convert(r.origin, to: view) ?? r.origin
             
             textView.frame.size.height = point.y-44
+            
+            #if APP_EXTENSION
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                textView.frame.size.height -= 22
+            }
+            #endif
         } else {
             textView.frame.size.height = view.safeAreaLayoutGuide.layoutFrame.height-44
         }
